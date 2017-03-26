@@ -41,13 +41,13 @@ def RecieveSerial():
     while True:
         inserial = ser.read()
         if inserial == b'1':
-            pyautogui.keyUp('e')
-        elif inserial == b'2':
-            pyautogui.keyUp('n')
-        elif inserial == b'3':
             pyautogui.keyDown('e')
-        elif inserial == b'4':
+        elif inserial == b'2':
             pyautogui.keyDown('n')
+        elif inserial == b'3':
+            pyautogui.keyUp('e')
+        elif inserial == b'4':
+            pyautogui.keyUp('n')
 
 
 def Setup():
