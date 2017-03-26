@@ -17,7 +17,7 @@ namespace ConsoleApplication1
         [DllImport("user32.dll")]
         static extern IntPtr GetForegroundWindow();
         [DllImport("user32.dll")]
-        static extern uint GetWindowThreadProcessId(IntPtr hWnd);
+        static extern uint GetWindowThreadProcessId(IntPtr hWnd, IntPtr ProcessId);
 
         // Define a few constant variables
         public static int engLayout = 67699721;
@@ -48,20 +48,28 @@ namespace ConsoleApplication1
             {
                 //Get the current window's thread id
                 IntPtr w_handle = GetForegroundWindow();
-                uint w_tid = GetWindowThreadProcessId(w_handle);
+                uint w_tid = GetWindowThreadProcessId(w_handle, IntPtr.Zero);
 
                 int layout_b = layout;
                 layout = (int)GetKeyboardLayout(w_tid);
 
-                if (layout == engLayout)
-                { 
-                    ser.Write(bytes, 0, 1);
-                } else if (layout == armLayout)
+                if (layout != layout_b)
                 {
-                    ser.Write(bytes, 1, 1);
-                } else
-                {
-                    ser.Write(bytes, 0, 1);
+                    if (layout == engLayout)
+                    {
+                        ser.Write(bytes, 0, 1);
+                        Console.WriteLine("English");
+                    }
+                    else if (layout == armLayout)
+                    {
+                        ser.Write(bytes, 1, 1);
+                        Console.WriteLine("Armenian");
+                    }
+                    else
+                    {
+                        ser.Write(bytes, 0, 1);
+                        Console.WriteLine("Unknown");
+                    }
                 }
             }
         }
