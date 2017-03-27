@@ -7,9 +7,14 @@ using System.Threading;
 using System.IO.Ports;
 using System.Windows.Forms;
 
-namespace ConsoleApplication1
+
+namespace Form1
 {
-    class Program {
+    class Program
+    {
+
+        static bool rrun;
+        static bool srun;
 
         // Define all external functions
         [DllImport("user32.dll")]
@@ -26,25 +31,32 @@ namespace ConsoleApplication1
 
         // Start the Serial Communication Port
         public static SerialPort ser = new SerialPort("COM1");
-        
+        public static Thread SendThread = new Thread(new ThreadStart(SendSerial));
+        public static Thread RecieveThread = new Thread(new ThreadStart(RecieveSerial));
+
         // Main Program
         static void Main(string[] args)
         {
+
+            // Start the form
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new Form1());
+
             ser.Open();
 
-            Thread SendThread = new Thread(new ThreadStart(SendSerial));
-            Thread RecieveThread = new Thread(new ThreadStart(RecieveSerial));
+            
             SendThread.Start();
             RecieveThread.Start();
         }
 
         // Continuously checks for layout change, and sends serial
-        static void SendSerial()
+        public static void SendSerial()
         {
             int layout = (int)GetKeyboardLayout(0);
             //  Console.WriteLine(layout);
-
-            while (true)
+            srun = true;
+            while (srun)
             {
                 //Get the current window's thread id
                 IntPtr w_handle = GetForegroundWindow();
@@ -75,9 +87,10 @@ namespace ConsoleApplication1
         }
 
         // Continuously checks for incoming serial
-        static void RecieveSerial()
+        public static void RecieveSerial()
         {
-            while (true)
+            rrun = true;
+            while (rrun)
             {
                 int inserial = ser.ReadByte();
 
@@ -89,6 +102,16 @@ namespace ConsoleApplication1
                     SendKeys.Send("n");
                 }
             }
+        }
+
+        public static void Restart()
+        {
+            srun = false;
+            rrun = false;
+            ser.Close();
+            ser.Open();
+            srun = true;
+            rrun = true;
         }
     }
 }
