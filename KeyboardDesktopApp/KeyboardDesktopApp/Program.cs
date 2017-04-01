@@ -121,30 +121,32 @@ namespace Form1
 
                 if (inserial == 49)
                 {
-                    if (layout == engLayout)
-                    {
-                        SendKeys.SendWait("e");
-                    } else if (layout == armLayout) {
-                        SendKeys.SendWait("ե");
-                    }  else
-                    {
-                        SendKeys.SendWait("e");
-                    }
-                    
+                    //if (layout == engLayout)
+                    //{
+                    //    SendKeys.SendWait("e");
+                    //} else if (layout == armLayout) {
+                    //    SendKeys.SendWait("ե");
+                    //}  else
+                    //{
+                    //    SendKeys.SendWait("e");
+                    //}
+                    SendKeys.SendWait("e");
+
                 } else if (inserial == 50)
                 {
-                    if (layout == engLayout)
-                    {
-                        SendKeys.SendWait("n");
-                    }
-                    else if (layout == armLayout)
-                    {
-                        SendKeys.SendWait("ն");
-                    }
-                    else
-                    {
-                        SendKeys.SendWait("n");
-                    }
+                    //if (layout == engLayout)
+                    //{
+                    //    SendKeys.SendWait("n");
+                    //}
+                    //else if (layout == armLayout)
+                    //{
+                    //    SendKeys.SendWait("ն");
+                    //}
+                    //else
+                    //{
+                    //    SendKeys.SendWait("n");
+                    //}
+                    SendKeys.SendWait("n");
                 }
                 else
                 {
@@ -200,7 +202,8 @@ namespace Form1
         {
             errorState = true;
             errorMsg = e.ToString();
-            _Form1.AppendTextStatus("Error has occured, please restart.");
+            _Form1.AppendTextStatus("Error has occured. Message: " + e.Message);
+            _Form1.AppendTextDebug(e.Message);
         }
     }
 }

@@ -98,6 +98,9 @@ namespace Form1
             // 
             // tabControl1
             // 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tabPage_main);
             this.tabControl1.Controls.Add(this.tabPage_debug);
             this.tabControl1.Location = new System.Drawing.Point(12, 27);
@@ -119,6 +122,7 @@ namespace Form1
             // 
             // buttonStart
             // 
+            this.buttonStart.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.buttonStart.Location = new System.Drawing.Point(192, 115);
             this.buttonStart.Name = "buttonStart";
             this.buttonStart.Size = new System.Drawing.Size(75, 23);
