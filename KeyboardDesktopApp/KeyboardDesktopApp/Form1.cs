@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,8 @@ namespace Form1
     {
         public Form1()
         {
+
+
             ContextMenu contextMenu1 = new ContextMenu();
             MenuItem menuItem1 = new MenuItem();
 
@@ -21,11 +24,11 @@ namespace Form1
             this.Resize += new System.EventHandler(this.Form1_Resize);
             _notifyicon.DoubleClick += new System.EventHandler(this._notifyicon_DoubleClick);
             menuItem1.Click += new System.EventHandler(menuItem1_Click);
-            this.exitToolStripMenuItem.Click += new EventHandler(exitToolStripMenuItem_Click);
-            this.restartToolStripMenuItem.Click += new EventHandler(restartToolStripMenuItem_Click);
+            this.toolStripMenuItemExit.Click += new EventHandler(toolStripMenuItemExit_Click);
+            this.toolStripMenuItemRestart.Click += new EventHandler(toolStripMenuItemRestart_Click);
             Application.ApplicationExit += new EventHandler(onApplicationExit);
 
-            this.toolStripStatusLabel1.Text = "Running!";
+            this.toolStripStatusLabel1.Text = "Keyboard Science Fair!";
 
 
 
@@ -44,6 +47,26 @@ namespace Form1
 
         NotifyIcon _notifyicon = new NotifyIcon();
 
+
+        public void AppendTextDebug(String text)
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action<string>(AppendTextDebug), new object[] { text });
+                return;
+            }
+            this.richTextBox1.AppendText(text + "\n");
+        }
+
+        public void AppendTextStatus(String text)
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action<string>(AppendTextStatus), new object[] { text });
+                return;
+            }
+            this.toolStripStatusLabel1.Text = text;
+        }
 
         // Minimize to System Tray
         private void Form1_Resize(object sender, EventArgs e)
@@ -85,7 +108,7 @@ namespace Form1
         }
 
         // On click of 'exit', exit the form
-        private void exitToolStripMenuItem_Click(object Sender, EventArgs e)
+        private void toolStripMenuItemExit_Click(object Sender, EventArgs e)
         {
             this.Close();
             Application.Exit();
@@ -93,18 +116,46 @@ namespace Form1
         }
 
         // On click of 'restart', restart threads
-        private void restartToolStripMenuItem_Click(object Sender, EventArgs e)
+        private void toolStripMenuItemRestart_Click(object Sender, EventArgs e)
         {
             this.toolStripStatusLabel1.Text = "Restarting...";
             Program.Restart();
-            this.toolStripStatusLabel1.Text = "Running!";
         }
 
         // On exit, close threads.
         private void onApplicationExit(object Sender, EventArgs e)
         {
+            Program.ser.Close();
             Application.Exit();
             Environment.Exit(0);
+        }
+        
+
+        private void buttonStart_Click(object sender, EventArgs e)
+        {
+            toolStripStatusLabel1.Text = "Running!";
+            Program.Start();
+            buttonStart.Text = "Started";
+            buttonStart.Enabled = false;
+        }
+
+        private void toolStripStatusLabel1_Click(object sender, EventArgs e)
+        {
+            if (Program.errorState)
+            {
+                MessageBox.Show(
+                    string.Format("Error Message {0}", Program.errorMsg),
+                    "Error State",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
+        private void toolStripMenuItemAbout_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(
+                "This software was made to accompany the Multilingual Keyboad science project. \n \nProject Developers: Narek Daduryan & Ethan Keshishian \nProject Github: github.com/dadur604/keyboardsciencefair \n \nReleased 2017",
+                "Multilingual Keyboard");
         }
     }
 }

@@ -12,6 +12,7 @@ namespace Form1
 {
     class Program
     {
+        public static Form1 _Form1;
 
         static bool rrun;
         static bool srun;
@@ -27,37 +28,45 @@ namespace Form1
         // Define a few constant variables
         public static int engLayout = 67699721;
         public static int armLayout = -266009557;
-        public static byte[] bytes = {1, 2};
 
         // Start the Serial Communication Port
-        public static SerialPort ser = new SerialPort("COM1");
+
+        public static SerialPort ser = new SerialPort("COM3");
         public static Thread SendThread = new Thread(new ThreadStart(SendSerial));
         public static Thread RecieveThread = new Thread(new ThreadStart(RecieveSerial));
 
+        public static bool errorState = false;
+        public static string errorMsg = null;
+
+        public static int layout = (int)GetKeyboardLayout(0);
+
+        public static ManualResetEvent _suspendEvent = new ManualResetEvent(true);
+
         // Main Program
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
 
-            // Start the form
+            SerialPort ser = new SerialPort("COM3", 9600);
+         
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            _Form1 = new Form1();
+            Application.Run(_Form1);
+            Start();
 
-            ser.Open();
 
-            
-            SendThread.Start();
-            RecieveThread.Start();
-        }
+    }
 
         // Continuously checks for layout change, and sends serial
         public static void SendSerial()
         {
-            int layout = (int)GetKeyboardLayout(0);
+            
             //  Console.WriteLine(layout);
             srun = true;
-            while (srun)
+            while (true)
             {
+                _suspendEvent.WaitOne(Timeout.Infinite);
+
                 //Get the current window's thread id
                 IntPtr w_handle = GetForegroundWindow();
                 uint w_tid = GetWindowThreadProcessId(w_handle, IntPtr.Zero);
@@ -69,18 +78,22 @@ namespace Form1
                 {
                     if (layout == engLayout)
                     {
-                        ser.Write(bytes, 0, 1);
+                        ser.Write("1");
                         Console.WriteLine("English");
+                        //Form1.("English");
+                        _Form1.AppendTextDebug("English");
                     }
                     else if (layout == armLayout)
                     {
-                        ser.Write(bytes, 1, 1);
+                        ser.Write("2");
                         Console.WriteLine("Armenian");
+                        _Form1.AppendTextDebug("Armenian");
                     }
                     else
                     {
-                        ser.Write(bytes, 0, 1);
+                        ser.Write("1");
                         Console.WriteLine("Unknown");
+                        _Form1.AppendTextDebug("Unknown");
                     }
                 }
             }
@@ -90,28 +103,104 @@ namespace Form1
         public static void RecieveSerial()
         {
             rrun = true;
-            while (rrun)
+            while (true)
             {
-                int inserial = ser.ReadByte();
+                _suspendEvent.WaitOne(Timeout.Infinite);
 
-                if (inserial == 1)
+                int inserial;
+
+                try
                 {
-                    SendKeys.Send("e");
-                } else if (inserial == 2)
+                    inserial = ser.ReadByte();
+                }
+                catch (Exception)
                 {
-                    SendKeys.Send("n");
+                    continue;
+                }
+                
+
+                if (inserial == 49)
+                {
+                    if (layout == engLayout)
+                    {
+                        SendKeys.SendWait("e");
+                    } else if (layout == armLayout) {
+                        SendKeys.SendWait("ե");
+                    }  else
+                    {
+                        SendKeys.SendWait("e");
+                    }
+                    
+                } else if (inserial == 50)
+                {
+                    if (layout == engLayout)
+                    {
+                        SendKeys.SendWait("n");
+                    }
+                    else if (layout == armLayout)
+                    {
+                        SendKeys.SendWait("ն");
+                    }
+                    else
+                    {
+                        SendKeys.SendWait("n");
+                    }
+                }
+                else
+                {
+                  //  Console.WriteLine(inserial);
                 }
             }
         }
 
         public static void Restart()
         {
-            srun = false;
-            rrun = false;
-            ser.Close();
-            ser.Open();
-            srun = true;
-            rrun = true;
+            try
+            {
+                _suspendEvent.Reset();
+                Thread.Sleep(500);
+                ser.Close();
+                ser.Open();
+                _suspendEvent.Set();
+
+                if (!SendThread.IsAlive)
+                {
+                    SendThread.Start();
+                }
+                if (!RecieveThread.IsAlive)
+                {
+                    RecieveThread.Start();
+                }
+                
+                _Form1.AppendTextStatus("Running!");
+            }
+            catch (Exception e)
+            {
+                errorHandle(e);
+            }
+            
+        }
+
+        public static void Start()
+        {
+            try
+            {
+                ser.Open();
+
+                SendThread.Start();
+                RecieveThread.Start();
+            }
+            catch (Exception e)
+            {
+                errorHandle(e);
+            }
+        }
+        
+        private static void errorHandle(Exception e)
+        {
+            errorState = true;
+            errorMsg = e.ToString();
+            _Form1.AppendTextStatus("Error has occured, please restart.");
         }
     }
 }
