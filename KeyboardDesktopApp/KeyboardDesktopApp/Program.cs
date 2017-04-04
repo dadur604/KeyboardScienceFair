@@ -1,70 +1,70 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
 using System.IO.Ports;
+using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows.Forms;
 
+namespace Form1 {
 
-namespace Form1
-{
-    class Program
-    {
+    /// <summary>
+    /// Program Class
+    /// Here is where the keyboard updating and functionality methods are found.
+    /// </summary>
+    internal class Program {
         public static Form1 _Form1;
-
-        static bool rrun;
-        static bool srun;
 
         // Define all external functions
         [DllImport("user32.dll")]
-        static extern IntPtr GetKeyboardLayout(uint idThread);
+        private static extern IntPtr GetKeyboardLayout(uint idThread);
+
         [DllImport("user32.dll")]
-        static extern IntPtr GetForegroundWindow();
+        private static extern IntPtr GetForegroundWindow();
+
         [DllImport("user32.dll")]
-        static extern uint GetWindowThreadProcessId(IntPtr hWnd, IntPtr ProcessId);
+        private static extern uint GetWindowThreadProcessId(IntPtr hWnd, IntPtr ProcessId);
 
         // Define a few constant variables
         public static int engLayout = 67699721;
+
         public static int armLayout = -266009557;
 
+        public static bool engState = false;
+        public static bool armState = false;
+
         // Start the Serial Communication Port
+        public static SerialPort ser = new SerialPort("COM3", 9600);
 
-        public static SerialPort ser = new SerialPort("COM3");
-        public static Thread SendThread = new Thread(new ThreadStart(SendSerial));
-        public static Thread RecieveThread = new Thread(new ThreadStart(RecieveSerial));
+        // Define Send and Recieve threads
+        public static Thread threadSend = new Thread(new ThreadStart(SendSerial));
 
+        public static Thread threadRecieve = new Thread(new ThreadStart(RecieveSerial));
+
+        // Initialize error-handling variables
         public static bool errorState = false;
+
         public static string errorMsg = null;
+        public static ManualResetEvent _suspendEvent = new ManualResetEvent(true);
 
         public static int layout = (int)GetKeyboardLayout(0);
 
-        public static ManualResetEvent _suspendEvent = new ManualResetEvent(true);
-
-        // Main Program
-        public static void Main(string[] args)
-        {
-
-            SerialPort ser = new SerialPort("COM3", 9600);
-         
+        /// <summary>
+        /// Entry point for program. Starts Form1, and runs start method
+        /// </summary>
+        /// <param name="args"></param>
+        public static void Main(string[] args) {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             _Form1 = new Form1();
             Application.Run(_Form1);
             Start();
+        }
 
-
-    }
-
-        // Continuously checks for layout change, and sends serial
-        public static void SendSerial()
-        {
-            
+        /// <summary>
+        /// Main method for checking keyboard layout, and updating keyboard via serial.
+        /// </summary>
+        private static void SendSerial() {
             //  Console.WriteLine(layout);
-            srun = true;
-            while (true)
-            {
+            while(true) {
                 _suspendEvent.WaitOne(Timeout.Infinite);
 
                 //Get the current window's thread id
@@ -74,23 +74,17 @@ namespace Form1
                 int layout_b = layout;
                 layout = (int)GetKeyboardLayout(w_tid);
 
-                if (layout != layout_b)
-                {
-                    if (layout == engLayout)
-                    {
+                if(layout != layout_b) {
+                    if(layout == engLayout && engState) {
                         ser.Write("1");
                         Console.WriteLine("English");
                         //Form1.("English");
                         _Form1.AppendTextDebug("English");
-                    }
-                    else if (layout == armLayout)
-                    {
+                    } else if(layout == armLayout && armState) {
                         ser.Write("2");
                         Console.WriteLine("Armenian");
                         _Form1.AppendTextDebug("Armenian");
-                    }
-                    else
-                    {
+                    } else {
                         ser.Write("1");
                         Console.WriteLine("Unknown");
                         _Form1.AppendTextDebug("Unknown");
@@ -99,112 +93,103 @@ namespace Form1
             }
         }
 
-        // Continuously checks for incoming serial
-        public static void RecieveSerial()
-        {
-            rrun = true;
-            while (true)
-            {
+        /// <summary>
+        /// Main method for checking for serial input from keyboard, to type keys.
+        /// </summary>
+        private static void RecieveSerial() {
+            while(true) {
                 _suspendEvent.WaitOne(Timeout.Infinite);
 
                 int inserial;
 
-                try
-                {
+                try {
                     inserial = ser.ReadByte();
-                }
-                catch (Exception)
-                {
+                } catch(Exception) {
                     continue;
                 }
-                
 
-                if (inserial == 49)
-                {
-                    //if (layout == engLayout)
-                    //{
-                    //    SendKeys.SendWait("e");
-                    //} else if (layout == armLayout) {
-                    //    SendKeys.SendWait("ե");
-                    //}  else
-                    //{
-                    //    SendKeys.SendWait("e");
-                    //}
+                if(inserial == 49) {
                     SendKeys.SendWait("e");
-
-                } else if (inserial == 50)
-                {
-                    //if (layout == engLayout)
-                    //{
-                    //    SendKeys.SendWait("n");
-                    //}
-                    //else if (layout == armLayout)
-                    //{
-                    //    SendKeys.SendWait("ն");
-                    //}
-                    //else
-                    //{
-                    //    SendKeys.SendWait("n");
-                    //}
+                } else if(inserial == 50) {
                     SendKeys.SendWait("n");
-                }
-                else
-                {
-                  //  Console.WriteLine(inserial);
+                } else {
+                    //  Console.WriteLine(inserial);
                 }
             }
         }
 
-        public static void Restart()
-        {
-            try
-            {
+        /// <summary>
+        /// Method restart will pause threads, re-open serial port, then resume threads.
+        /// </summary>
+        public static void Restart() {
+            try {
                 _suspendEvent.Reset();
                 Thread.Sleep(500);
                 ser.Close();
                 ser.Open();
                 _suspendEvent.Set();
 
-                if (!SendThread.IsAlive)
-                {
-                    SendThread.Start();
+                if(!threadSend.IsAlive) {
+                    threadSend.Start();
                 }
-                if (!RecieveThread.IsAlive)
-                {
-                    RecieveThread.Start();
+                if(!threadRecieve.IsAlive) {
+                    threadRecieve.Start();
                 }
-                
+
                 _Form1.AppendTextStatus("Running!");
+                errorState = false;
+                _Form1.buttonStart_Update();
+            } catch(Exception e) {
+                ErrorHandle(e);
             }
-            catch (Exception e)
-            {
-                errorHandle(e);
-            }
-            
         }
 
-        public static void Start()
-        {
-            try
-            {
+        /// <summary>
+        /// Start method will open serial port, and start threads.
+        /// </summary>
+        public static void Start() {
+            try {
+                if(ser.IsOpen) {
+                    ser.Close();
+                }
                 ser.Open();
 
-                SendThread.Start();
-                RecieveThread.Start();
-            }
-            catch (Exception e)
-            {
-                errorHandle(e);
+                if(!threadSend.IsAlive) {
+                    threadSend.Start();
+                }
+                if(!threadRecieve.IsAlive) {
+                    threadRecieve.Start();
+                }
+                _Form1.buttonStart_Update();
+            } catch(Exception e) {
+                ErrorHandle(e);
             }
         }
-        
-        private static void errorHandle(Exception e)
-        {
+
+        /// <summary>
+        /// General ErrorHandle method will set the program into an error state, and display error in Form1
+        /// </summary>
+        /// <param name="e"></param>
+        private static void ErrorHandle(Exception e) {
             errorState = true;
             errorMsg = e.ToString();
             _Form1.AppendTextStatus("Error has occured. Message: " + e.Message);
             _Form1.AppendTextDebug(e.Message);
+            _Form1.buttonStart_Update();
+        }
+
+        public static void updateLayouts(CheckedListBox.CheckedItemCollection o) {
+            //Console.WriteLine(o);
+            if(o.Contains("Armenian")) {
+                armState = true;
+            } else {
+                armState = false;
+            }
+            if(o.Contains("English")) {
+                engState = true;
+            } else {
+                engState = false;
+            }
         }
     }
 }
-
