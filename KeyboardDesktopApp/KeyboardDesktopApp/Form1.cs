@@ -14,7 +14,6 @@ namespace Form1 {
     public partial class Form1 : Form {
 
         public Form1() {
-            
             ContextMenu contextMenu1 = new ContextMenu();
             MenuItem menuItem1 = new MenuItem();
 

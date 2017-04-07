@@ -40,9 +40,9 @@ namespace Form1 {
         public static Thread threadRecieve = new Thread(new ThreadStart(RecieveSerial));
 
         // Initialize error-handling variables
-        public static bool errorState = false;
+        public static bool errorState { get; set; } = false;
 
-        public static string errorMsg = null;
+        public static string errorMsg { get; set; } = null;
         public static ManualResetEvent _suspendEvent = new ManualResetEvent(true);
 
         public static int layout = (int)GetKeyboardLayout(0);
