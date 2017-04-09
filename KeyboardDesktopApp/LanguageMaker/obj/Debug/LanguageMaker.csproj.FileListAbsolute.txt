@@ -1,0 +1,6 @@
+C:\Users\dadur\Documents\_Narek\Programs\KeyboardScienceFair\KeyboardDesktopApp\LanguageMaker\bin\Debug\LanguageMaker.exe.config
+C:\Users\dadur\Documents\_Narek\Programs\KeyboardScienceFair\KeyboardDesktopApp\LanguageMaker\bin\Debug\LanguageMaker.exe
+C:\Users\dadur\Documents\_Narek\Programs\KeyboardScienceFair\KeyboardDesktopApp\LanguageMaker\bin\Debug\LanguageMaker.pdb
+C:\Users\dadur\Documents\_Narek\Programs\KeyboardScienceFair\KeyboardDesktopApp\LanguageMaker\obj\Debug\LanguageMaker.csprojResolveAssemblyReference.cache
+C:\Users\dadur\Documents\_Narek\Programs\KeyboardScienceFair\KeyboardDesktopApp\LanguageMaker\obj\Debug\LanguageMaker.exe
+C:\Users\dadur\Documents\_Narek\Programs\KeyboardScienceFair\KeyboardDesktopApp\LanguageMaker\obj\Debug\LanguageMaker.pdb
