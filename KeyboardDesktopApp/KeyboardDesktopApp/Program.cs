@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO.Ports;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -12,6 +13,8 @@ namespace Form1 {
     /// </summary>
     internal class Program {
         public static Form1 _Form1;
+
+        public static Dictionary<string, int> layoutDictionary = new Dictionary<string, int>();
 
         // Define all external functions
         [DllImport("user32.dll")]
@@ -27,9 +30,6 @@ namespace Form1 {
         public static int engLayout = 67699721;
 
         public static int armLayout = -266009557;
-
-        public static bool engState = false;
-        public static bool armState = false;
 
         // Start the Serial Communication Port
         public static SerialPort ser = new SerialPort("COM3", 9600);
@@ -47,16 +47,21 @@ namespace Form1 {
 
         public static int layout = (int)GetKeyboardLayout(0);
 
+        public static CheckedListBox.CheckedItemCollection checkedItems;
+        public static List<string> enabledLayouts = new List<string>();
+
         /// <summary>
         /// Entry point for program. Starts Form1, and runs start method
         /// </summary>
         /// <param name="args"></param>
         public static void Main(string[] args) {
+            layoutDictionary.Add("English", 1);
+            layoutDictionary.Add("Armenian", 2);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             _Form1 = new Form1();
+
             Application.Run(_Form1);
-            Start();
         }
 
         /// <summary>
@@ -64,7 +69,7 @@ namespace Form1 {
         /// </summary>
         private static void SendSerial() {
             //  Console.WriteLine(layout);
-            while(true) {
+            while (true) {
                 _suspendEvent.WaitOne(Timeout.Infinite);
 
                 //Get the current window's thread id
@@ -74,14 +79,18 @@ namespace Form1 {
                 int layout_b = layout;
                 layout = (int)GetKeyboardLayout(w_tid);
 
-                if(layout != layout_b) {
-                    if(layout == engLayout && engState) {
-                        ser.Write("1");
+                if (layout != layout_b) {
+                    if (layout == engLayout) {
+                        if (enabledLayouts.Contains("English")) {
+                            ser.Write(layoutDictionary["English"].ToString());
+                        }
                         Console.WriteLine("English");
                         //Form1.("English");
                         _Form1.AppendTextDebug("English");
-                    } else if(layout == armLayout && armState) {
-                        ser.Write("2");
+                    } else if (layout == armLayout) {
+                        if (enabledLayouts.Contains("Armenian")) {
+                            ser.Write(layoutDictionary["Armenian"].ToString());
+                        }
                         Console.WriteLine("Armenian");
                         _Form1.AppendTextDebug("Armenian");
                     } else {
@@ -97,20 +106,20 @@ namespace Form1 {
         /// Main method for checking for serial input from keyboard, to type keys.
         /// </summary>
         private static void RecieveSerial() {
-            while(true) {
+            while (true) {
                 _suspendEvent.WaitOne(Timeout.Infinite);
 
                 int inserial;
 
                 try {
                     inserial = ser.ReadByte();
-                } catch(Exception) {
+                } catch (Exception) {
                     continue;
                 }
 
-                if(inserial == 49) {
+                if (inserial == 49) {
                     SendKeys.SendWait("e");
-                } else if(inserial == 50) {
+                } else if (inserial == 50) {
                     SendKeys.SendWait("n");
                 } else {
                     //  Console.WriteLine(inserial);
@@ -126,20 +135,22 @@ namespace Form1 {
                 _suspendEvent.Reset();
                 Thread.Sleep(500);
                 ser.Close();
+                updateLayouts();
+                LanguageMaker.GenerateArduinoCode();
                 ser.Open();
                 _suspendEvent.Set();
 
-                if(!threadSend.IsAlive) {
+                if (!threadSend.IsAlive) {
                     threadSend.Start();
                 }
-                if(!threadRecieve.IsAlive) {
+                if (!threadRecieve.IsAlive) {
                     threadRecieve.Start();
                 }
 
                 _Form1.AppendTextStatus("Running!");
                 errorState = false;
                 _Form1.buttonStart_Update();
-            } catch(Exception e) {
+            } catch (Exception e) {
                 ErrorHandle(e);
             }
         }
@@ -148,20 +159,22 @@ namespace Form1 {
         /// Start method will open serial port, and start threads.
         /// </summary>
         public static void Start() {
+            updateLayouts();
+            LanguageMaker.GenerateArduinoCode();
             try {
-                if(ser.IsOpen) {
+                if (ser.IsOpen) {
                     ser.Close();
                 }
                 ser.Open();
 
-                if(!threadSend.IsAlive) {
+                if (!threadSend.IsAlive) {
                     threadSend.Start();
                 }
-                if(!threadRecieve.IsAlive) {
+                if (!threadRecieve.IsAlive) {
                     threadRecieve.Start();
                 }
                 _Form1.buttonStart_Update();
-            } catch(Exception e) {
+            } catch (Exception e) {
                 ErrorHandle(e);
             }
         }
@@ -178,17 +191,24 @@ namespace Form1 {
             _Form1.buttonStart_Update();
         }
 
-        public static void updateLayouts(CheckedListBox.CheckedItemCollection o) {
+        public static void updateLayouts() {
             //Console.WriteLine(o);
-            if(o.Contains("Armenian")) {
-                armState = true;
-            } else {
-                armState = false;
-            }
-            if(o.Contains("English")) {
-                engState = true;
-            } else {
-                engState = false;
+            //if (o.Contains("Armenian")) {
+            //    armState = true;
+            //} else {
+            //    armState = false;
+            //}
+            //if (o.Contains("English")) {
+            //    engState = true;
+            //} else {
+            //    engState = false;
+            //}
+            enabledLayouts.Clear();
+            try {
+                foreach (var item in checkedItems) {
+                    enabledLayouts.Add(item.ToString());
+                }
+            } catch (Exception) {
             }
         }
     }

@@ -14,7 +14,6 @@ namespace Form1 {
     public partial class Form1 : Form {
 
         public Form1() {
-            
             ContextMenu contextMenu1 = new ContextMenu();
             MenuItem menuItem1 = new MenuItem();
 
@@ -27,7 +26,7 @@ namespace Form1 {
             Application.ApplicationExit += new EventHandler(onApplicationExit);
 
             this.toolStripStatusLabel1.Text = "Keyboard Science Fair!";
-            this.checkedListBox_layoutsList.ItemCheck += (s, e) => { if(e.CurrentValue == CheckState.Indeterminate) e.NewValue = CheckState.Indeterminate; };
+            this.checkedListBox_layoutsList.ItemCheck += (s, e) => { if (e.CurrentValue == CheckState.Indeterminate) e.NewValue = CheckState.Indeterminate; };
 
             // Initialize contextMenu1
             contextMenu1.MenuItems.AddRange(
@@ -40,13 +39,13 @@ namespace Form1 {
             _notifyicon.Icon = new Icon("appicon.ico");
             _notifyicon.ContextMenu = contextMenu1;
 
-            Program.updateLayouts(checkedListBox_layoutsList.CheckedItems);
+            Program.checkedItems = (checkedListBox_layoutsList.CheckedItems);
         }
 
         private NotifyIcon _notifyicon = new NotifyIcon();
 
         public void AppendTextDebug(String text) {
-            if(this.InvokeRequired) {
+            if (this.InvokeRequired) {
                 this.Invoke(new Action<string>(AppendTextDebug), new object[] { text });
                 return;
             }
@@ -54,7 +53,7 @@ namespace Form1 {
         }
 
         public void AppendTextStatus(String text) {
-            if(this.InvokeRequired) {
+            if (this.InvokeRequired) {
                 this.Invoke(new Action<string>(AppendTextStatus), new object[] { text });
                 return;
             }
@@ -63,12 +62,12 @@ namespace Form1 {
 
         // Minimize to System Tray
         private void Form1_Resize(object sender, EventArgs e) {
-            if(FormWindowState.Minimized == this.WindowState) {
+            if (FormWindowState.Minimized == this.WindowState) {
                 _notifyicon.Visible = true;
                 _notifyicon.Icon = new Icon("appicon.ico");
                 _notifyicon.Text = "Multilingual Keyboard";
                 this.Hide();
-            } else if(FormWindowState.Normal == this.WindowState) {
+            } else if (FormWindowState.Normal == this.WindowState) {
                 _notifyicon.Visible = false;
             }
         }
@@ -79,7 +78,7 @@ namespace Form1 {
 
             // Set the WindowState to normal if the form is minimized.
             this.Show();
-            if(this.WindowState == FormWindowState.Minimized)
+            if (this.WindowState == FormWindowState.Minimized)
                 this.WindowState = FormWindowState.Normal;
 
             // Activate the form.
@@ -114,7 +113,7 @@ namespace Form1 {
         }
 
         private void buttonStart_Click(object sender, EventArgs e) {
-            if(Program.errorState) {
+            if (Program.errorState) {
                 Program.Restart();
             }
             toolStripStatusLabel1.Text = "Running!";
@@ -123,7 +122,7 @@ namespace Form1 {
         }
 
         private void toolStripStatusLabel1_Click(object sender, EventArgs e) {
-            if(Program.errorState) {
+            if (Program.errorState) {
                 MessageBox.Show(
                     string.Format("Error Message {0}", Program.errorMsg),
                     "Error State",
@@ -139,10 +138,10 @@ namespace Form1 {
         }
 
         public void buttonStart_Update() {
-            if(Program.errorState) {
+            if (Program.errorState) {
                 buttonStart.Enabled = true;
                 buttonStart.Text = "Restart";
-            } else if(Program.threadSend.IsAlive && Program.threadRecieve.IsAlive) {
+            } else if (Program.threadSend.IsAlive && Program.threadRecieve.IsAlive) {
                 buttonStart.Text = "Started";
                 buttonStart.Enabled = false;
             } else {
@@ -156,7 +155,7 @@ namespace Form1 {
         }
 
         private void checkedListBox_layoutsList_SelectedIndexChanged(object sender, EventArgs e) {
-            Program.updateLayouts(checkedListBox_layoutsList.CheckedItems);
+            Program.checkedItems = (checkedListBox_layoutsList.CheckedItems);
         }
     }
 }
