@@ -9,11 +9,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Form1 {
-
-    public partial class Form1 : Form {
-
-        public Form1() {
+namespace Form1
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
             ContextMenu contextMenu1 = new ContextMenu();
             MenuItem menuItem1 = new MenuItem();
 
@@ -27,6 +28,16 @@ namespace Form1 {
 
             this.toolStripStatusLabel1.Text = "Keyboard Science Fair!";
             this.checkedListBox_layoutsList.ItemCheck += (s, e) => { if (e.CurrentValue == CheckState.Indeterminate) e.NewValue = CheckState.Indeterminate; };
+            //checkedListBox_layoutsList.Items.Add("English", CheckState.Indeterminate);
+            //checkedListBox_layoutsList.Items.Add("Armenian");
+
+            foreach (var item in Program.RefreshLayouts())
+            {
+                checkedListBox_layoutsList.Items.Add(item.name);
+            }
+
+            buttonRefreshLayouts.Font = new Font("Wingdings 3", 10, FontStyle.Bold);
+            buttonRefreshLayouts.Text = Char.ConvertFromUtf32(80); // or 80
 
             // Initialize contextMenu1
             contextMenu1.MenuItems.AddRange(
@@ -44,16 +55,20 @@ namespace Form1 {
 
         private NotifyIcon _notifyicon = new NotifyIcon();
 
-        public void AppendTextDebug(String text) {
-            if (this.InvokeRequired) {
+        public void AppendTextDebug(string text)
+        {
+            if (this.InvokeRequired)
+            {
                 this.Invoke(new Action<string>(AppendTextDebug), new object[] { text });
                 return;
             }
             this.richTextBox1.AppendText(text + "\n");
         }
 
-        public void AppendTextStatus(String text) {
-            if (this.InvokeRequired) {
+        public void AppendTextStatus(string text)
+        {
+            if (this.InvokeRequired)
+            {
                 this.Invoke(new Action<string>(AppendTextStatus), new object[] { text });
                 return;
             }
@@ -61,19 +76,24 @@ namespace Form1 {
         }
 
         // Minimize to System Tray
-        private void Form1_Resize(object sender, EventArgs e) {
-            if (FormWindowState.Minimized == this.WindowState) {
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            if (FormWindowState.Minimized == this.WindowState)
+            {
                 _notifyicon.Visible = true;
                 _notifyicon.Icon = new Icon("appicon.ico");
                 _notifyicon.Text = "Multilingual Keyboard";
                 this.Hide();
-            } else if (FormWindowState.Normal == this.WindowState) {
+            }
+            else if (FormWindowState.Normal == this.WindowState)
+            {
                 _notifyicon.Visible = false;
             }
         }
 
         // On double-click of icon, open form
-        private void _notifyicon_DoubleClick(object Sender, EventArgs e) {
+        private void _notifyicon_DoubleClick(object Sender, EventArgs e)
+        {
             // Show the form when the user double clicks on the notify icon.
 
             // Set the WindowState to normal if the form is minimized.
@@ -86,34 +106,40 @@ namespace Form1 {
         }
 
         // On click of 'exit', exit the form
-        private void menuItem1_Click(object Sender, EventArgs e) {
+        private void menuItem1_Click(object Sender, EventArgs e)
+        {
             this.Close();
             Application.Exit();
             Environment.Exit(0);
         }
 
         // On click of 'exit', exit the form
-        private void toolStripMenuItemExit_Click(object Sender, EventArgs e) {
+        private void toolStripMenuItemExit_Click(object Sender, EventArgs e)
+        {
             this.Close();
             Application.Exit();
             Environment.Exit(0);
         }
 
         // On click of 'restart', restart threads
-        private void toolStripMenuItemRestart_Click(object Sender, EventArgs e) {
+        private void toolStripMenuItemRestart_Click(object Sender, EventArgs e)
+        {
             this.toolStripStatusLabel1.Text = "Restarting...";
             Program.Restart();
         }
 
         // On exit, close threads.
-        private void onApplicationExit(object Sender, EventArgs e) {
+        private void onApplicationExit(object Sender, EventArgs e)
+        {
             Program.ser.Close();
             Application.Exit();
             Environment.Exit(0);
         }
 
-        private void buttonStart_Click(object sender, EventArgs e) {
-            if (Program.errorState) {
+        private void buttonStart_Click(object sender, EventArgs e)
+        {
+            if (Program.errorState)
+            {
                 Program.Restart();
             }
             toolStripStatusLabel1.Text = "Running!";
@@ -121,8 +147,10 @@ namespace Form1 {
             buttonStart_Update();
         }
 
-        private void toolStripStatusLabel1_Click(object sender, EventArgs e) {
-            if (Program.errorState) {
+        private void toolStripStatusLabel1_Click(object sender, EventArgs e)
+        {
+            if (Program.errorState)
+            {
                 MessageBox.Show(
                     string.Format("Error Message {0}", Program.errorMsg),
                     "Error State",
@@ -131,31 +159,63 @@ namespace Form1 {
             }
         }
 
-        private void toolStripMenuItemAbout_Click(object sender, EventArgs e) {
+        private void toolStripMenuItemAbout_Click(object sender, EventArgs e)
+        {
             MessageBox.Show(
                 "This software was made to accompany the Multilingual Keyboad science project. \n \nProject Developers: Narek Daduryan & Ethan Keshishian \nProject Github: github.com/dadur604/keyboardsciencefair \n \nReleased 2017",
                 "Multilingual Keyboard");
         }
 
-        public void buttonStart_Update() {
-            if (Program.errorState) {
+        public void buttonStart_Update()
+        {
+            if (Program.errorState)
+            {
                 buttonStart.Enabled = true;
                 buttonStart.Text = "Restart";
-            } else if (Program.threadSend.IsAlive && Program.threadRecieve.IsAlive) {
+            }
+            else if (Program.threadSend.IsAlive && Program.threadRecieve.IsAlive)
+            {
                 buttonStart.Text = "Started";
                 buttonStart.Enabled = false;
-            } else {
+            }
+            else {
                 buttonStart.Text = "Start";
                 buttonStart.Enabled = true;
             }
         }
 
-        private void button_downloadMore_Click(object sender, EventArgs e) {
+        private void button_downloadMore_Click(object sender, EventArgs e)
+        {
             System.Diagnostics.Process.Start("http://www.github.com/dadur604/keyboardsciencefair");
         }
 
-        private void checkedListBox_layoutsList_SelectedIndexChanged(object sender, EventArgs e) {
+        private void checkedListBox_layoutsList_SelectedIndexChanged(object sender, EventArgs e)
+        {
             Program.checkedItems = (checkedListBox_layoutsList.CheckedItems);
+        }
+
+        private void toolStripMenuItemSettings_Click(object sender, EventArgs e)
+        {
+            Form SettingsForm = new SettingsForm();
+            SettingsForm.ShowDialog();
+        }
+
+        private void buttonRefreshLayouts_Click(object sender, EventArgs e)
+        {
+            checkedListBox_layoutsList.Items.Clear();
+            foreach (var item in Program.RefreshLayouts())
+            {
+                checkedListBox_layoutsList.Items.Add(item.name);
+            }
+            // RefreshLayout(); // TODO: Here find all layouts in folder, and update the list in layouts tab.
+            // TODO: Add new window to create layouts, which uses the languagemaker code to generate a layout file using image.
+            // TODO: add right-click to each element to delete or update a language
+        }
+
+        private void toolStripMenuItemCreateLayout_Click(object sender, EventArgs e)
+        {
+            Form LayoutCreator = new LayoutCreator();
+            LayoutCreator.Show();
         }
     }
 }

@@ -2,11 +2,15 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
+using System;
+using System.Configuration;
+using System.Windows.Forms;
 
-namespace Form1 {
-
-    internal class LanguageMaker {
-        public static string inCode = @"C:\Users\dadur\Documents\_Narek\Programs\KeyboardScienceFair\Arduino_Program\Arduino_Program.ino";
+namespace Form1
+{
+    internal static class LanguageMaker
+    {
+        private static string inCode = ConfigurationManager.AppSettings["arduinoOutputTemplateLocation"] + @"\Arduino_Program\Arduino_Program.ino";
         public static List<string> outCode = new List<string>();
 
         public static string inFirstImage;
@@ -17,9 +21,10 @@ namespace Form1 {
         private static Bitmap inFirstBitmap;
         private static Bitmap inSecondBitmap;
 
-        private static void getImages(string lang) {
-            inFirstImage = lang + "1.png";
-            inSecondImage = lang + "2.png";
+        private static void GetImages(List<string> imagePaths)
+        {
+            inFirstImage = imagePaths[0];
+            inSecondImage = imagePaths[1];
             imageFirstPath = Image.FromFile(inFirstImage);
             imageSecondPath = Image.FromFile(inSecondImage);
 
@@ -32,18 +37,25 @@ namespace Form1 {
 
         public static bool continueReading;
 
-        private static void OutputCode() {
+        private static void OutputCode()
+        {
             outCode.Clear();
+
             IEnumerable<string> inLines = File.ReadLines(inCode);
             continueReading = true;
-            foreach (string line in inLines) {
-                if (continueReading) {
+            foreach (string line in inLines)
+            {
+                if (continueReading)
+                {
                     outCode.Add(line);
-                    if (line.Contains("//@#")) {
+                    if (line.Contains("//@#"))
+                    {
                         continueReading = !continueReading;
                         outCode.AddRange(outLines);
                     }
-                } else if (line.Contains("//@#")) {
+                }
+                else if (line.Contains("//@#"))
+                {
                     outCode.Add(line);
                     continueReading = !continueReading;
                 }
@@ -53,22 +65,41 @@ namespace Form1 {
         private static int genCount;
         private static List<string> langs = new List<string>();
 
-        //TODO Change current number index
-        public static void GenerateArduinoCode() {
+        public static void UpdateArduinoTemplatePath(string newTempPath)
+        {
+            Configuration config = ConfigurationManager.OpenExeConfiguration(Application.ExecutablePath);
+            config.AppSettings.Settings["arduinoOutputTemplateLocation"].Value = newTempPath;
+            config.Save();
+            inCode = newTempPath + @"\Arduino_Program\Arduino_Program.ino";
+        }
+
+        public static void GenerateArduinoCode()
+        {
             langs.Clear();
             genCount = Program.enabledLayouts.Count;
             langs.AddRange(Program.enabledLayouts);
             outLines.Clear();
 
-            for (int i = 0; i < genCount; i++) {
-                if (!File.Exists(langs[i] + ".txt")) {
-                    outLines.AddRange(GenerateLayoutCode(langs[i]));
-                } else if (File.Exists(langs[i] + ".txt")) {
-                    outLines.AddRange(File.ReadLines(langs[i] + ".txt"));
+            for (int i = 0; i < genCount; i++)
+            {
+                if (!File.Exists(langs[i] + ".klayout"))
+                {
+                    throw new IOException($"Cannot find {langs[i]} code file. Try re-generating the layout.");
+                    //outLines.AddRange(GenerateLayoutCode(langs[i]));
+                }
+                else if (File.Exists(langs[i] + ".klayout"))
+                {
+                    outLines.AddRange(File.ReadLines(langs[i] + ".klayout"));
                 }
             }
-
-            OutputCode();
+            try
+            {
+                OutputCode();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
 
             File.Delete(outFile);
 
@@ -76,47 +107,62 @@ namespace Form1 {
             UploadToArduino();
         }
 
-        private static void UploadToArduino() {
+        private static void UploadToArduino()
+        {
         }
 
         private static List<string> outLinesLang = new List<string>();
 
-        private static List<string> GenerateLayoutCode(string lang) {
+        public static List<string> GenerateLayoutCode(string lang, List<string> imagePaths, Language language)
+        {
             outLinesLang.Clear();
-            getImages(lang);
-            outLinesLang.Add("if (current == '" + Program.layoutDictionary[lang] + "'){");
-            for (int l = 0; l <= 23; l++) {
+            outLinesLang.Add("// Name: " + language.name);
+            outLinesLang.Add("// SID: " + language.serialID);
+            outLinesLang.Add("// WID: " + language.windowsID);
+
+            GetImages(imagePaths);
+            outLinesLang.Add("if (current == '" + language.serialID + "'){");
+            for (int l = 0; l <= 23; l++)
+            {
                 NewLine(l);
             }
             outLinesLang.Add("}");
-            File.WriteAllLines(lang + ".txt", outLinesLang);
+            File.WriteAllLines(lang + ".klayout", outLinesLang);
             return outLinesLang;
         }
 
         private static string last;
         private static string ifText;
 
-        private static void NewLine(int line) {
+        private static void NewLine(int line)
+        {
             //ifText = string.Format("if (row == {0}){", line);
             ifText = "if (row == " + (line + 1) + "){";
             outLinesLang.Add(ifText);
-            if (line == 0) {
+            if (line == 0)
+            {
                 outLinesLang.Add("digitalWrite(flm, HIGH);");
             }
             outLinesLang.Add("digitalWrite(din, LOW);");
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < 4; i++)
+            {
                 outLinesLang.Add("pulse();");
             }
             last = "LOW";
-            for (int x = 35; x >= 0; x--) {
+            for (int x = 35; x >= 0; x--)
+            {
                 //System.Console.WriteLine(inSecondBitmap.GetPixel(x, line));
-                if (inSecondBitmap.GetPixel(x, line) == Color.FromArgb(255, 255, 255, 255)) {
-                    if (last == "HIGH") {
+                if (inSecondBitmap.GetPixel(x, line) == Color.FromArgb(255, 255, 255, 255))
+                {
+                    if (last == "HIGH")
+                    {
                         outLinesLang.Add("digitalWrite(din, LOW);");
                         last = "LOW";
                     }
-                } else {
-                    if (last == "LOW") {
+                }
+                else {
+                    if (last == "LOW")
+                    {
                         outLinesLang.Add("digitalWrite(din, HIGH);");
                         last = "HIGH";
                     }
@@ -125,19 +171,25 @@ namespace Form1 {
             }
 
             outLinesLang.Add("digitalWrite(din, LOW);");
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < 4; i++)
+            {
                 outLinesLang.Add("pulse();");
             }
             // Second (First) Image
-            for (int x = 35; x >= 0; x--) {
+            for (int x = 35; x >= 0; x--)
+            {
                 //System.Console.WriteLine(inFirstBitmap.GetPixel(x, line));
-                if (inFirstBitmap.GetPixel(x, line) == Color.FromArgb(255, 255, 255, 255)) {
-                    if (last == "HIGH") {
+                if (inFirstBitmap.GetPixel(x, line) == Color.FromArgb(255, 255, 255, 255))
+                {
+                    if (last == "HIGH")
+                    {
                         outLinesLang.Add("digitalWrite(din, LOW);");
                         last = "LOW";
                     }
-                } else {
-                    if (last == "LOW") {
+                }
+                else {
+                    if (last == "LOW")
+                    {
                         outLinesLang.Add("digitalWrite(din, HIGH);");
                         last = "HIGH";
                     }
@@ -146,13 +198,22 @@ namespace Form1 {
             }
             outLinesLang.Add("digitalWrite(lp, HIGH);");
             outLinesLang.Add("digitalWrite(lp, LOW);");
-            if (line == 0) {
+            if (line == 0)
+            {
                 outLinesLang.Add("digitalWrite(flm, LOW);");
             }
             outLinesLang.Add("}");
         }
 
-        private static Image FixedSize(Image imgPhoto, int Width, int Height) {
+        /// <summary>
+        /// Image Resizer - http://stackoverflow.com/questions/1940581/
+        /// </summary>
+        /// <param name="imgPhoto"></param>
+        /// <param name="Width"></param>
+        /// <param name="Height"></param>
+        /// <returns></returns>
+        public static Image FixedSize(Image imgPhoto, int Width, int Height)
+        {
             int sourceWidth = imgPhoto.Width;
             int sourceHeight = imgPhoto.Height;
             int sourceX = 0;
@@ -166,11 +227,13 @@ namespace Form1 {
 
             nPercentW = ((float)Width / (float)sourceWidth);
             nPercentH = ((float)Height / (float)sourceHeight);
-            if (nPercentH < nPercentW) {
+            if (nPercentH < nPercentW)
+            {
                 nPercent = nPercentH;
                 destX = System.Convert.ToInt16((Width -
                               (sourceWidth * nPercent)) / 2);
-            } else {
+            }
+            else {
                 nPercent = nPercentW;
                 destY = System.Convert.ToInt16((Height -
                               (sourceHeight * nPercent)) / 2);

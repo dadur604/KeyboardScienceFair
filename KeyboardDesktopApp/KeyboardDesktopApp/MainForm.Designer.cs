@@ -19,9 +19,12 @@ namespace Form1 {
         private void InitializeComponent() {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItemFile = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemRestart = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemExit = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItemEdit = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItemSettings = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItemCreateLayout = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -31,10 +34,11 @@ namespace Form1 {
             this.buttonStart = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage_layout = new System.Windows.Forms.TabPage();
-            this.checkedListBox_layoutsList = new System.Windows.Forms.CheckedListBox();
-            this.label_layoutsSelected = new System.Windows.Forms.Label();
-            this.label_layoutNotFound = new System.Windows.Forms.Label();
+            this.buttonRefreshLayouts = new System.Windows.Forms.Button();
             this.button_downloadMore = new System.Windows.Forms.Button();
+            this.label_layoutNotFound = new System.Windows.Forms.Label();
+            this.label_layoutsSelected = new System.Windows.Forms.Label();
+            this.checkedListBox_layoutsList = new System.Windows.Forms.CheckedListBox();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.tabPage_debug.SuspendLayout();
@@ -46,7 +50,8 @@ namespace Form1 {
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem,
+            this.toolStripMenuItemFile,
+            this.toolStripMenuItemEdit,
             this.toolStripMenuItemAbout});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -54,14 +59,14 @@ namespace Form1 {
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
-            // fileToolStripMenuItem
+            // toolStripMenuItemFile
             // 
-            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItemFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItemRestart,
             this.toolStripMenuItemExit});
-            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
-            this.fileToolStripMenuItem.Text = "File";
+            this.toolStripMenuItemFile.Name = "toolStripMenuItemFile";
+            this.toolStripMenuItemFile.Size = new System.Drawing.Size(37, 20);
+            this.toolStripMenuItemFile.Text = "File";
             // 
             // toolStripMenuItemRestart
             // 
@@ -75,6 +80,29 @@ namespace Form1 {
             this.toolStripMenuItemExit.Size = new System.Drawing.Size(110, 22);
             this.toolStripMenuItemExit.Text = "Exit";
             // 
+            // toolStripMenuItemEdit
+            // 
+            this.toolStripMenuItemEdit.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItemSettings,
+            this.toolStripMenuItemCreateLayout});
+            this.toolStripMenuItemEdit.Name = "toolStripMenuItemEdit";
+            this.toolStripMenuItemEdit.Size = new System.Drawing.Size(39, 20);
+            this.toolStripMenuItemEdit.Text = "Edit";
+            // 
+            // toolStripMenuItemSettings
+            // 
+            this.toolStripMenuItemSettings.Name = "toolStripMenuItemSettings";
+            this.toolStripMenuItemSettings.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItemSettings.Text = "Settings";
+            this.toolStripMenuItemSettings.Click += new System.EventHandler(this.toolStripMenuItemSettings_Click);
+            // 
+            // toolStripMenuItemCreateLayout
+            // 
+            this.toolStripMenuItemCreateLayout.Name = "toolStripMenuItemCreateLayout";
+            this.toolStripMenuItemCreateLayout.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItemCreateLayout.Text = "Create Layout";
+            this.toolStripMenuItemCreateLayout.Click += new System.EventHandler(this.toolStripMenuItemCreateLayout_Click);
+            // 
             // toolStripMenuItemAbout
             // 
             this.toolStripMenuItemAbout.Name = "toolStripMenuItemAbout";
@@ -84,19 +112,25 @@ namespace Form1 {
             // 
             // statusStrip1
             // 
+            this.statusStrip1.GripMargin = new System.Windows.Forms.Padding(2, 2, 10, 2);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 305);
+            this.statusStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
+            this.statusStrip1.Location = new System.Drawing.Point(0, 307);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(505, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(505, 20);
             this.statusStrip1.TabIndex = 1;
             this.statusStrip1.Text = "statusStrip1";
             // 
             // toolStripStatusLabel1
             // 
+            this.toolStripStatusLabel1.Margin = new System.Windows.Forms.Padding(0, 3, 10, 2);
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(118, 17);
+            this.toolStripStatusLabel1.Padding = new System.Windows.Forms.Padding(0, 0, 15, 0);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(133, 15);
+            this.toolStripStatusLabel1.Spring = true;
             this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.toolStripStatusLabel1.Click += new System.EventHandler(this.toolStripStatusLabel1_Click);
             // 
             // tabPage_debug
@@ -156,6 +190,7 @@ namespace Form1 {
             // 
             // tabPage_layout
             // 
+            this.tabPage_layout.Controls.Add(this.buttonRefreshLayouts);
             this.tabPage_layout.Controls.Add(this.button_downloadMore);
             this.tabPage_layout.Controls.Add(this.label_layoutNotFound);
             this.tabPage_layout.Controls.Add(this.label_layoutsSelected);
@@ -168,27 +203,25 @@ namespace Form1 {
             this.tabPage_layout.Text = "Layouts";
             this.tabPage_layout.UseVisualStyleBackColor = true;
             // 
-            // checkedListBox_layoutsList
+            // buttonRefreshLayouts
             // 
-            this.checkedListBox_layoutsList.CheckOnClick = true;
-            this.checkedListBox_layoutsList.FormattingEnabled = true;
-            this.checkedListBox_layoutsList.Items.Add("English", CheckState.Indeterminate);
-            this.checkedListBox_layoutsList.Items.Add("Armenian");
-            this.checkedListBox_layoutsList.Location = new System.Drawing.Point(17, 36);
-            this.checkedListBox_layoutsList.Name = "checkedListBox_layoutsList";
-            this.checkedListBox_layoutsList.Size = new System.Drawing.Size(126, 199);
-            this.checkedListBox_layoutsList.TabIndex = 0;
-            this.checkedListBox_layoutsList.SelectedIndexChanged += new System.EventHandler(this.checkedListBox_layoutsList_SelectedIndexChanged);
+            this.buttonRefreshLayouts.Location = new System.Drawing.Point(127, 8);
+            this.buttonRefreshLayouts.Name = "buttonRefreshLayouts";
+            this.buttonRefreshLayouts.Size = new System.Drawing.Size(25, 25);
+            this.buttonRefreshLayouts.TabIndex = 4;
+            this.buttonRefreshLayouts.Text = "button1";
+            this.buttonRefreshLayouts.UseVisualStyleBackColor = true;
+            this.buttonRefreshLayouts.Click += new System.EventHandler(this.buttonRefreshLayouts_Click);
             // 
-            // label_layoutsSelected
+            // button_downloadMore
             // 
-            this.label_layoutsSelected.AutoSize = true;
-            this.label_layoutsSelected.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label_layoutsSelected.Location = new System.Drawing.Point(15, 14);
-            this.label_layoutsSelected.Name = "label_layoutsSelected";
-            this.label_layoutsSelected.Size = new System.Drawing.Size(105, 13);
-            this.label_layoutsSelected.TabIndex = 1;
-            this.label_layoutsSelected.Text = "Layouts Selected";
+            this.button_downloadMore.Location = new System.Drawing.Point(266, 139);
+            this.button_downloadMore.Name = "button_downloadMore";
+            this.button_downloadMore.Size = new System.Drawing.Size(104, 23);
+            this.button_downloadMore.TabIndex = 3;
+            this.button_downloadMore.Text = "Download Layouts";
+            this.button_downloadMore.UseVisualStyleBackColor = true;
+            this.button_downloadMore.Click += new System.EventHandler(this.button_downloadMore_Click);
             // 
             // label_layoutNotFound
             // 
@@ -200,15 +233,25 @@ namespace Form1 {
             this.label_layoutNotFound.TabIndex = 2;
             this.label_layoutNotFound.Text = "Your layout not found in the list?\r\nDownload more online!";
             // 
-            // button_downloadMore
+            // label_layoutsSelected
             // 
-            this.button_downloadMore.Location = new System.Drawing.Point(266, 139);
-            this.button_downloadMore.Name = "button_downloadMore";
-            this.button_downloadMore.Size = new System.Drawing.Size(104, 23);
-            this.button_downloadMore.TabIndex = 3;
-            this.button_downloadMore.Text = "Download Layouts";
-            this.button_downloadMore.UseVisualStyleBackColor = true;
-            this.button_downloadMore.Click += new System.EventHandler(this.button_downloadMore_Click);
+            this.label_layoutsSelected.AutoSize = true;
+            this.label_layoutsSelected.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label_layoutsSelected.Location = new System.Drawing.Point(15, 14);
+            this.label_layoutsSelected.Name = "label_layoutsSelected";
+            this.label_layoutsSelected.Size = new System.Drawing.Size(105, 13);
+            this.label_layoutsSelected.TabIndex = 1;
+            this.label_layoutsSelected.Text = "Layouts Selected";
+            // 
+            // checkedListBox_layoutsList
+            // 
+            this.checkedListBox_layoutsList.CheckOnClick = true;
+            this.checkedListBox_layoutsList.FormattingEnabled = true;
+            this.checkedListBox_layoutsList.Location = new System.Drawing.Point(17, 36);
+            this.checkedListBox_layoutsList.Name = "checkedListBox_layoutsList";
+            this.checkedListBox_layoutsList.Size = new System.Drawing.Size(135, 199);
+            this.checkedListBox_layoutsList.TabIndex = 0;
+            this.checkedListBox_layoutsList.SelectedIndexChanged += new System.EventHandler(this.checkedListBox_layoutsList_SelectedIndexChanged);
             // 
             // Form1
             // 
@@ -239,7 +282,7 @@ namespace Form1 {
         #endregion
 
         private MenuStrip menuStrip1;
-        private ToolStripMenuItem fileToolStripMenuItem;
+        private ToolStripMenuItem toolStripMenuItemFile;
         private ToolStripMenuItem toolStripMenuItemRestart;
         private ToolStripMenuItem toolStripMenuItemExit;
         private ToolStripMenuItem toolStripMenuItemAbout;
@@ -255,5 +298,9 @@ namespace Form1 {
         private Button button_downloadMore;
         private Label label_layoutNotFound;
         private Label label_layoutsSelected;
+        private ToolStripMenuItem toolStripMenuItemEdit;
+        private ToolStripMenuItem toolStripMenuItemSettings;
+        private ToolStripMenuItem toolStripMenuItemCreateLayout;
+        private Button buttonRefreshLayouts;
     }
 }
