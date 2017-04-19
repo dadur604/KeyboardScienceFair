@@ -1,0 +1,12 @@
+C:\Users\dadur\Documents\_Narek\Programs\KeyboardScienceFair\KeyboardDesktopApp\KeyboardDesktopApp\bin\Debug\KeyboardDesktopApp.exe.config
+C:\Users\dadur\Documents\_Narek\Programs\KeyboardScienceFair\KeyboardDesktopApp\KeyboardDesktopApp\bin\Debug\KeyboardDesktopApp.exe
+C:\Users\dadur\Documents\_Narek\Programs\KeyboardScienceFair\KeyboardDesktopApp\KeyboardDesktopApp\bin\Debug\KeyboardDesktopApp.pdb
+C:\Users\dadur\Documents\_Narek\Programs\KeyboardScienceFair\KeyboardDesktopApp\KeyboardDesktopApp\obj\Debug\KeyboardDesktopApp.csprojResolveAssemblyReference.cache
+C:\Users\dadur\Documents\_Narek\Programs\KeyboardScienceFair\KeyboardDesktopApp\KeyboardDesktopApp\obj\Debug\Form1.Form1.resources
+C:\Users\dadur\Documents\_Narek\Programs\KeyboardScienceFair\KeyboardDesktopApp\KeyboardDesktopApp\obj\Debug\KeyboardDesktopApp.csproj.GenerateResource.Cache
+C:\Users\dadur\Documents\_Narek\Programs\KeyboardScienceFair\KeyboardDesktopApp\KeyboardDesktopApp\obj\Debug\KeyboardDesktopApp.exe
+C:\Users\dadur\Documents\_Narek\Programs\KeyboardScienceFair\KeyboardDesktopApp\KeyboardDesktopApp\obj\Debug\KeyboardDesktopApp.pdb
+C:\Users\dadur\Documents\_Narek\Programs\KeyboardScienceFair\KeyboardDesktopApp\KeyboardDesktopApp\bin\Debug\appicon.ico
+C:\Users\dadur\Documents\_Narek\Programs\KeyboardScienceFair\KeyboardDesktopApp\KeyboardDesktopApp\obj\Debug\Form1.SettingsForm.resources
+C:\Users\dadur\Documents\_Narek\Programs\KeyboardScienceFair\KeyboardDesktopApp\KeyboardDesktopApp\obj\Debug\KyboardDesktopApp.Properties.Resources.resources
+C:\Users\dadur\Documents\_Narek\Programs\KeyboardScienceFair\KeyboardDesktopApp\KeyboardDesktopApp\obj\Debug\Form1.LayoutCreator.resources
