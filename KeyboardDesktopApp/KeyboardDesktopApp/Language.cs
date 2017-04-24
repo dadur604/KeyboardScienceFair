@@ -1,9 +1,10 @@
 ﻿namespace Form1
 {
-    internal class Language
+    public class Language
     {
         public string name { get; set; }
         public int windowsID { get; set; }
         public int serialID { get; set; }
+        public bool isDefault { get; set; }
     }
 }

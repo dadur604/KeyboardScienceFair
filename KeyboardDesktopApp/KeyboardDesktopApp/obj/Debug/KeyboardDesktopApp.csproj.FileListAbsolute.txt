@@ -10,3 +10,13 @@ C:\Users\dadur\Documents\_Narek\Programs\KeyboardScienceFair\KeyboardDesktopApp\
 C:\Users\dadur\Documents\_Narek\Programs\KeyboardScienceFair\KeyboardDesktopApp\KeyboardDesktopApp\obj\Debug\Form1.SettingsForm.resources
 C:\Users\dadur\Documents\_Narek\Programs\KeyboardScienceFair\KeyboardDesktopApp\KeyboardDesktopApp\obj\Debug\KyboardDesktopApp.Properties.Resources.resources
 C:\Users\dadur\Documents\_Narek\Programs\KeyboardScienceFair\KeyboardDesktopApp\KeyboardDesktopApp\obj\Debug\Form1.LayoutCreator.resources
+C:\Users\dadur\Documents\_Narek\Programs\KeyboardScienceFair\KeyboardDesktopApp\KeyboardDesktopApp\obj\Debug\Form1.EditLayoutForm.resources
+C:\Users\dadur\Documents\_Narek\Programs\KeyboardScienceFair\KeyboardDesktopApp\KeyboardDesktopApp\bin\Debug\ArduinoUploader.dll
+C:\Users\dadur\Documents\_Narek\Programs\KeyboardScienceFair\KeyboardDesktopApp\KeyboardDesktopApp\bin\Debug\IntelHexFormatReader.dll
+C:\Users\dadur\Documents\_Narek\Programs\KeyboardScienceFair\KeyboardDesktopApp\KeyboardDesktopApp\bin\Debug\NLog.dll
+C:\Users\dadur\Documents\_Narek\Programs\KeyboardScienceFair\KeyboardDesktopApp\KeyboardDesktopApp\bin\Debug\RJCP.SerialPortStream.dll
+C:\Users\dadur\Documents\_Narek\Programs\KeyboardScienceFair\KeyboardDesktopApp\KeyboardDesktopApp\bin\Debug\NLog.xml
+C:\Users\dadur\Documents\_Narek\Programs\KeyboardScienceFair\KeyboardDesktopApp\KeyboardDesktopApp\bin\Debug\RJCP.SerialPortStream.pdb
+C:\Users\dadur\Documents\_Narek\Programs\KeyboardScienceFair\KeyboardDesktopApp\KeyboardDesktopApp\bin\Debug\RJCP.SerialPortStream.xml
+C:\Users\dadur\Documents\_Narek\Programs\KeyboardScienceFair\KeyboardDesktopApp\KeyboardDesktopApp\bin\Debug\WindowsInput.dll
+C:\Users\dadur\Documents\_Narek\Programs\KeyboardScienceFair\KeyboardDesktopApp\KeyboardDesktopApp\bin\Debug\WindowsInput.xml

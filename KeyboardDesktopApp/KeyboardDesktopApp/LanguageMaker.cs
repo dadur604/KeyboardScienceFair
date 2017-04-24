@@ -6,6 +6,7 @@ using System;
 using System.Configuration;
 using System.Windows.Forms;
 
+
 namespace Form1
 {
     internal static class LanguageMaker
@@ -32,7 +33,7 @@ namespace Form1
             inSecondBitmap = new Bitmap(FixedSize(imageSecondPath, 36, 24));
         }
 
-        public static string outFile = "outFile.txt";
+        public static string outFile = AppDomain.CurrentDomain.BaseDirectory + "outFile.cpp";
         private static List<string> outLines = new List<string>();
 
         public static bool continueReading;
@@ -109,6 +110,7 @@ namespace Form1
 
         private static void UploadToArduino()
         {
+            ArduinoCompileAndUpload.Run();
         }
 
         private static List<string> outLinesLang = new List<string>();

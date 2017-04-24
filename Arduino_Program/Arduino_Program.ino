@@ -64,19 +64,19 @@ void loop() {
 	if (Serial.available() > 0) {
 					// read the incoming byte:
 					current = Serial.read(),DEC;
-					Serial.write(current);
+					//Serial.write(current);
 	}
 
 	if (digitalRead(sw1) == HIGH){
 	  if (first1 == 1){
-		  //Serial.write('3');
+		  Serial.write('3');
 		  first1 = 0;
 		}
 		sw1s = 0;
 	}
 	if (digitalRead(sw2) == HIGH){
 		if (first2 == 1){
-		  //Serial.write('4');
+		  Serial.write('4');
 		  first2 = 0;
 		}
 		sw2s = 0;

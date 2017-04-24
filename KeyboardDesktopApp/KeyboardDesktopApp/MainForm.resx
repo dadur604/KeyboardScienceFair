@@ -124,6 +124,17 @@
     <value>132, 17</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="pictureBoxDefaultCheck.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
+        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJ
+        TUUH4QQXFjU5zB0+HQAAANZJREFUOE/F078LAWEcx/FTJr8GxGBgUhYjq8mASTH7L5TZoMyy2OxK2cxW
+        I5tNScrCJD/en8ujJLlj8KlX17eez91zz3XWv+K5X79KBi3E7MllspjhigEicJwc5lBZNijCUQpYwJS3
+        aMALOz5UELWn55SwgimvUcfjIENo44AeAlC0oAYVTFk3KuMpVeyhBSd04Ie2qK2a8hJ6lZfoiV2orIVH
+        TLC7z6LDy+NtgujjDFMy9Nn0+T4mjCEuMOUp0nCcOEZQeYwkXCeFJhL29GV++llcxLJuXhw2Alw3S5kA
+        AAAASUVORK5CYII=
+</value>
+  </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAkAAAAAAAEAIAAsBwAAlgAAAICAAAABACAAKAgBAMIHAABgYAAAAQAgAKiUAADqDwEASEgAAAEA

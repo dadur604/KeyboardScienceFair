@@ -6,20 +6,18 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
+using WindowsInput;
 
-namespace Form1
-{
+namespace Form1 {
     /// <summary>
     /// Program Class
     /// Here is where the keyboard updating and functionality methods are found.
     /// </summary>
-    internal class Program
-    {
+    internal class Program {
         public static Form1 _Form1;
         //public static LanguageMaker LanguageMaker = new LanguageMaker();
 
         //public static Dictionary<string, int> languageDictionary = new Dictionary<string, int>();
-        // TODO: Create custom list class
         public static LanguageCollection languageDictionary = new LanguageCollection();
 
         // Define all external functions
@@ -50,18 +48,22 @@ namespace Form1
 
         public static CheckedListBox.CheckedItemCollection checkedItems;
         public static List<string> enabledLayouts = new List<string>();
-        // TODO: Select DEfault language
 
         /// <summary>
         /// Entry point for program. Starts Form1, and runs start method
         /// </summary>
         /// <param name="args"></param>
         [STAThread]
-        public static void Main(string[] args)
-        {
+        public static void Main(string[] args) {
             // English: 67699721
             // Armenian: -266009557
-            languageDictionary.AddRange(RefreshLayouts());
+            RefreshLayouts();
+            try {
+                Directory.Delete(AppDomain.CurrentDomain.BaseDirectory + "ArduinoOutput\\", true);
+            } catch (Exception) {
+
+            }
+            Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "ArduinoOutput\\");
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             _Form1 = new Form1();
@@ -71,28 +73,38 @@ namespace Form1
 
         private string ans = File.ReadLines("a").Skip(1).Take(1).First();
 
-        public static LanguageCollection RefreshLayouts()
-        {
-            try
-            {
-                languageDictionary.Clear();
-                foreach (var item in Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.klayout"))
-                {
-                    string name = File.ReadLines(item).Take(1).First().Trim(new char[] { '/', ' ', 'N', 'a', 'm', 'e', ':' });
-                    int serialID = int.Parse(File.ReadLines(item).Skip(1).Take(1).First().Trim(new char[] { '/', ' ', 'S', 'I', 'D', ':' }));
-                    int windowsID = int.Parse(File.ReadLines(item).Skip(2).Take(1).First().Trim(new char[] { '/', ' ', 'W', 'I', 'D', ':' }));
-                    languageDictionary.Add(new Language()
-                    {
-                        name = name,
+        public static LanguageCollection RefreshLayouts() {
+            //try {
+            foreach (var item in languageDictionary.ToList<Language>()) {
+                string path = AppDomain.CurrentDomain.BaseDirectory + item.name + ".klayout";
+
+                if (!File.Exists(path)) {
+                    languageDictionary.Remove(item);
+                }
+            }
+            foreach (var path in Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.klayout")) {
+
+                string filename = Path.GetFileNameWithoutExtension(path);
+                int serialID = int.Parse(File.ReadLines(path).Skip(1).Take(1).First().Trim(new char[] { '/', ' ', 'S', 'I', 'D', ':' }));
+                int windowsID = int.Parse(File.ReadLines(path).Skip(2).Take(1).First().Trim(new char[] { '/', ' ', 'W', 'I', 'D', ':' }));
+
+                if (languageDictionary.ContainsName(filename)) {
+                    var language = languageDictionary.GetLanguageByName(filename);
+
+                    language.serialID = serialID;
+                    language.windowsID = windowsID;
+                } else {
+                    languageDictionary.Add(new Language() {
+                        name = filename,
                         serialID = serialID,
-                        windowsID = windowsID
+                        windowsID = windowsID,
+                        isDefault = false
                     });
                 }
             }
-            catch (Exception e)
-            {
-                ErrorHandle(e);
-            }
+            //} catch (Exception e) {
+            //    ErrorHandle(e);
+            //}
 
             return languageDictionary;
         }
@@ -100,11 +112,9 @@ namespace Form1
         /// <summary>
         /// Main method for checking keyboard layout, and updating keyboard via serial.
         /// </summary>
-        private static void SendSerial()
-        {
+        private static void SendSerial() {
             //  Console.WriteLine(layout);
-            while (true)
-            {
+            while (true) {
                 _suspendEvent.WaitOne(Timeout.Infinite);
 
                 //Get the current window's thread id
@@ -115,15 +125,11 @@ namespace Form1
                 layout = (int)GetKeyboardLayout(w_tid);
                 bool found;
 
-                if (layout != layout_b)
-                {
+                if (layout != layout_b) {
                     found = false;
-                    foreach (var item in languageDictionary)
-                    {
-                        if (layout == item.windowsID)
-                        {
-                            if (enabledLayouts.Contains(item.name))
-                            {
+                    foreach (var item in languageDictionary) {
+                        if (layout == item.windowsID) {
+                            if (enabledLayouts.Contains(item.name)) {
                                 ser.Write(item.serialID.ToString());
                                 found = true;
                             }
@@ -132,9 +138,8 @@ namespace Form1
                             break;
                         }
                     }
-                    if (!found)
-                    {
-                        ser.Write("1");
+                    if (!found) {
+                        ser.Write(languageDictionary.GetDefaultSID().ToString());
                         Console.WriteLine("Unknown");
                         _Form1.AppendTextDebug(string.Format("Unknown : {0}", layout));
                     }
@@ -145,125 +150,135 @@ namespace Form1
         /// <summary>
         /// Main method for checking for serial input from keyboard, to type keys.
         /// </summary>
-        private static void RecieveSerial()
-        {
-            while (true)
-            {
+        private static void RecieveSerial() {
+            InputSimulator keys = new InputSimulator();
+            while (true) {
                 _suspendEvent.WaitOne(Timeout.Infinite);
 
                 int inserial;
 
-                try
-                {
+                try {
                     inserial = ser.ReadByte();
-                }
-                catch (Exception)
-                {
+                } catch (Exception) {
                     continue;
                 }
-
-                if (inserial == 49)
-                {
-                    SendKeys.SendWait("e");
-                }
-                else if (inserial == 50)
-                {
-                    SendKeys.SendWait("n");
-                }
-                else {
-                    //  Console.WriteLine(inserial);
+                Console.WriteLine(inserial);
+                if (inserial == 49) {
+                    keys.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_E);
+                } else if (inserial == 50) {
+                    keys.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.VK_N);
+                } else if (inserial == 51) {
+                    keys.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_E);
+                } else if (inserial == 52) {
+                    keys.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.VK_N);
+                } else {
+                    Console.WriteLine(inserial);
                 }
             }
         }
 
-        /// <summary>
-        /// Method restart will pause threads, re-open serial port, then resume threads.
-        /// </summary>
-        public static void Restart()
-        {
-            try
+            /// <summary>
+            /// Method restart will pause threads, re-open serial port, then resume threads.
+            /// </summary>
+            public static void Restart()
             {
-                _suspendEvent.Reset();
-                ser.Close();
-                Start();
-                _Form1.AppendTextStatus("Running!");
-                errorState = false;
-                _Form1.buttonStart_Update();
-            }
-            catch (Exception e)
-            {
-                ErrorHandle(e);
-            }
-        }
+                try {
+                    _suspendEvent.Reset();
+                    Start();
+                    errorState = false;
 
-        /// <summary>
-        /// Start method will open serial port, and start threads.
-        /// </summary>
-        public static void Start()
-        {
-            try
-            {
-                UpdateLayouts();
-                LanguageMaker.GenerateArduinoCode();
-            }
-            catch (Exception e)
-            {
-                ErrorHandle(e);
+                } catch (Exception e) {
+                    ErrorHandle(e);
+                }
             }
 
-            try
+            /// <summary>
+            /// Start method will open serial port, and start threads.
+            /// </summary>
+            public static void Start()
             {
-                if (ser.IsOpen)
-                {
+                //try {
+                if (ser.IsOpen) {
                     ser.Close();
                 }
+
+                UpdateLayouts();
+                LanguageMaker.GenerateArduinoCode();
+
                 ser.Open();
 
-                if (!threadSend.IsAlive)
-                {
+                if (!threadSend.IsAlive) {
                     threadSend.Start();
                 }
-                if (!threadRecieve.IsAlive)
-                {
+                if (!threadRecieve.IsAlive) {
                     threadRecieve.Start();
                 }
-                _Form1.buttonStart_Update();
                 _suspendEvent.Set();
+                //} catch (Exception e) {
+                //    ErrorHandle(e);
+                //}
             }
-            catch (Exception e)
+
+            /// <summary>
+            /// General ErrorHandle method will set the program into an error state, and display error in Form1
+            /// </summary>
+            /// <param name="e"></param>
+            public static void ErrorHandle(Exception e)
             {
-                ErrorHandle(e);
+                errorState = true;
+                errorMsg = e.ToString();
+                _Form1.AppendTextStatus("Error has occurred. Message: " + e.Message);
+                _Form1.AppendTextDebug(e.Message);
+                _Form1.buttonStart_Update();
             }
-        }
 
-        /// <summary>
-        /// General ErrorHandle method will set the program into an error state, and display error in Form1
-        /// </summary>
-        /// <param name="e"></param>
-        public static void ErrorHandle(Exception e)
-        {
-            errorState = true;
-            errorMsg = e.ToString();
-            _Form1.AppendTextStatus("Error has occurred. Message: " + e.Message);
-            _Form1.AppendTextDebug(e.Message);
-            _Form1.buttonStart_Update();
-        }
-
-        public static void UpdateLayouts()
-        {
-            
-            enabledLayouts.Clear();
-            try
+            public static void UpdateLayouts()
             {
-                foreach (var item in checkedItems)
-                {
-                    enabledLayouts.Add(item.ToString());
+
+                enabledLayouts.Clear();
+
+                if (checkedItems.Count == 0) {
+                    throw new Exception("Please select at least one layout!");
+                } else if (checkedItems.Count > 2) {
+                    throw new Exception("Please select no more than two layouts!");
+                } else if (!languageDictionary.ContainsDefault()) {
+                    ErrorHandle(new Exception("No Default!"));
+                } else {
+
+                    foreach (var item in checkedItems) {
+                        enabledLayouts.Add(item.ToString());
+                    }
                 }
+
             }
-            catch (Exception e)
+
+        internal static void DeleteLayout(int index) {
+            string lang = languageDictionary[index].name;
+            File.Delete(lang + ".klayout");
+            
+            RefreshLayouts();
+        }
+
+        public static void UpdateLayoutFromUser(Language lang, string name, int sid, int wid)
             {
-                ErrorHandle(e);
+
+                string path = AppDomain.CurrentDomain.BaseDirectory + lang.name + ".klayout";
+
+                lang.name = name;
+                lang.serialID = sid;
+                lang.windowsID = wid;
+
+                // Write to file
+                string[] lines = File.ReadAllLines(path);
+                lines[0] = "// Name: " + lang.name;
+                lines[1] = "// SID: " + lang.serialID;
+                lines[2] = "// WID: " + lang.windowsID;
+                File.Delete(path);
+
+                path = AppDomain.CurrentDomain.BaseDirectory + lang.name + ".klayout";
+                File.WriteAllLines(path, lines);
+
+                RefreshLayouts();
             }
         }
     }
-}

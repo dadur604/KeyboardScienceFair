@@ -48,7 +48,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxInstalLocation.Location = new System.Drawing.Point(96, 47);
             this.textBoxInstalLocation.Name = "textBoxInstalLocation";
-            this.textBoxInstalLocation.Size = new System.Drawing.Size(293, 20);
+            this.textBoxInstalLocation.Size = new System.Drawing.Size(295, 20);
             this.textBoxInstalLocation.TabIndex = 1;
             this.textBoxInstalLocation.Click += new System.EventHandler(this.textBoxInstallLocation_Click);
             // 
@@ -66,7 +66,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(490, 109);
+            this.ClientSize = new System.Drawing.Size(492, 117);
             this.Controls.Add(this.buttonBrowseInstallLocation);
             this.Controls.Add(this.textBoxInstalLocation);
             this.Controls.Add(this.labelArduinoPath);

@@ -11,5 +11,6 @@ namespace Form1
         public string name { get; set; }
         public int SID { get; set; }
         public int WID { get; set; }
+        public bool isDefault { get; set; }
     }
 }

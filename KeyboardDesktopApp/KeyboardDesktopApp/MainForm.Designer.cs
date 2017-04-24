@@ -34,6 +34,7 @@ namespace Form1 {
             this.buttonStart = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage_layout = new System.Windows.Forms.TabPage();
+            this.pictureBoxDefaultCheck = new System.Windows.Forms.PictureBox();
             this.buttonRefreshLayouts = new System.Windows.Forms.Button();
             this.button_downloadMore = new System.Windows.Forms.Button();
             this.label_layoutNotFound = new System.Windows.Forms.Label();
@@ -45,6 +46,7 @@ namespace Form1 {
             this.tabPage_main.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage_layout.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxDefaultCheck)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -92,14 +94,14 @@ namespace Form1 {
             // toolStripMenuItemSettings
             // 
             this.toolStripMenuItemSettings.Name = "toolStripMenuItemSettings";
-            this.toolStripMenuItemSettings.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItemSettings.Size = new System.Drawing.Size(147, 22);
             this.toolStripMenuItemSettings.Text = "Settings";
             this.toolStripMenuItemSettings.Click += new System.EventHandler(this.toolStripMenuItemSettings_Click);
             // 
             // toolStripMenuItemCreateLayout
             // 
             this.toolStripMenuItemCreateLayout.Name = "toolStripMenuItemCreateLayout";
-            this.toolStripMenuItemCreateLayout.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItemCreateLayout.Size = new System.Drawing.Size(147, 22);
             this.toolStripMenuItemCreateLayout.Text = "Create Layout";
             this.toolStripMenuItemCreateLayout.Click += new System.EventHandler(this.toolStripMenuItemCreateLayout_Click);
             // 
@@ -190,6 +192,7 @@ namespace Form1 {
             // 
             // tabPage_layout
             // 
+            this.tabPage_layout.Controls.Add(this.pictureBoxDefaultCheck);
             this.tabPage_layout.Controls.Add(this.buttonRefreshLayouts);
             this.tabPage_layout.Controls.Add(this.button_downloadMore);
             this.tabPage_layout.Controls.Add(this.label_layoutNotFound);
@@ -202,6 +205,17 @@ namespace Form1 {
             this.tabPage_layout.TabIndex = 2;
             this.tabPage_layout.Text = "Layouts";
             this.tabPage_layout.UseVisualStyleBackColor = true;
+            // 
+            // pictureBoxDefaultCheck
+            // 
+            this.pictureBoxDefaultCheck.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxDefaultCheck.Image")));
+            this.pictureBoxDefaultCheck.InitialImage = null;
+            this.pictureBoxDefaultCheck.Location = new System.Drawing.Point(158, 36);
+            this.pictureBoxDefaultCheck.Name = "pictureBoxDefaultCheck";
+            this.pictureBoxDefaultCheck.Size = new System.Drawing.Size(16, 16);
+            this.pictureBoxDefaultCheck.TabIndex = 5;
+            this.pictureBoxDefaultCheck.TabStop = false;
+            this.pictureBoxDefaultCheck.Visible = false;
             // 
             // buttonRefreshLayouts
             // 
@@ -251,7 +265,9 @@ namespace Form1 {
             this.checkedListBox_layoutsList.Name = "checkedListBox_layoutsList";
             this.checkedListBox_layoutsList.Size = new System.Drawing.Size(135, 199);
             this.checkedListBox_layoutsList.TabIndex = 0;
+            this.checkedListBox_layoutsList.MouseClick += new System.Windows.Forms.MouseEventHandler(this.checkedListBox_layoutsList_MouseClick);
             this.checkedListBox_layoutsList.SelectedIndexChanged += new System.EventHandler(this.checkedListBox_layoutsList_SelectedIndexChanged);
+            this.checkedListBox_layoutsList.MouseUp += new System.Windows.Forms.MouseEventHandler(this.checkedListBox_layoutsList_MouseClick);
             // 
             // Form1
             // 
@@ -274,6 +290,7 @@ namespace Form1 {
             this.tabControl1.ResumeLayout(false);
             this.tabPage_layout.ResumeLayout(false);
             this.tabPage_layout.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxDefaultCheck)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -302,5 +319,6 @@ namespace Form1 {
         private ToolStripMenuItem toolStripMenuItemSettings;
         private ToolStripMenuItem toolStripMenuItemCreateLayout;
         private Button buttonRefreshLayouts;
+        private PictureBox pictureBoxDefaultCheck;
     }
 }
