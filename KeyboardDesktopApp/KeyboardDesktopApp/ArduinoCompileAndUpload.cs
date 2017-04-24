@@ -24,7 +24,7 @@ namespace Form1 {
             cmdCommands.Add("-tools \"C:\\Program Files (x86)\\Arduino\\tools-builder\"");
             cmdCommands.Add("-tools \"C:\\Program Files (x86)\\Arduino\\hardware\\tools\\avr\"");
             cmdCommands.Add("-built-in-libraries \"C:\\Program Files (x86)\\Arduino\\libraries\"");
-            cmdCommands.Add("-libraries \"C:\\Users\\dadur\\Documents\\Arduino\\libraries\"");
+            //cmdCommands.Add("-libraries \"C:\\Users\\dadur\\Documents\\Arduino\\libraries\"");
             cmdCommands.Add("-fqbn=arduino:avr:uno");
             cmdCommands.Add("-vid-pid=0X2341_0X0043");
             cmdCommands.Add("-ide-version=10607");
@@ -60,14 +60,32 @@ namespace Form1 {
         }
 
         private static void Upload(string path) {
-            ArduinoSketchUploader uploader = new ArduinoSketchUploader(
+            try {
+                ArduinoSketchUploader uploader = new ArduinoSketchUploader(
                 new ArduinoSketchUploaderOptions() {
                     FileName = path + "outFile.cpp.hex",
                     ArduinoModel = ArduinoUploader.Hardware.ArduinoModel.UnoR3,
                     PortName = "COM3"
                 });
-            uploader.UploadSketch();
-            Console.WriteLine("done");
+                bool good = true;
+                try {
+                    
+                    Program.ser.Open();
+                } catch (Exception e) {
+                    Program.ErrorHandle(e);
+                    good = false;
+                } finally {
+                    Program.ser.Close();
+                }
+                if (good) {
+                    uploader.UploadSketch();
+                    Console.WriteLine("done");
+                }
+                
+            } catch (Exception e) {
+                Program.ErrorHandle(e);
+            }
+            
             try {
                 Directory.Delete(path, true);
             } catch (Exception) {

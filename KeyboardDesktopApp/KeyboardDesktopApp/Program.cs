@@ -197,7 +197,7 @@ namespace Form1 {
             /// </summary>
             public static void Start()
             {
-                //try {
+                try {
                 if (ser.IsOpen) {
                     ser.Close();
                 }
@@ -205,7 +205,7 @@ namespace Form1 {
                 UpdateLayouts();
                 LanguageMaker.GenerateArduinoCode();
 
-                ser.Open();
+               ser.Open();
 
                 if (!threadSend.IsAlive) {
                     threadSend.Start();
@@ -214,9 +214,9 @@ namespace Form1 {
                     threadRecieve.Start();
                 }
                 _suspendEvent.Set();
-                //} catch (Exception e) {
-                //    ErrorHandle(e);
-                //}
+                } catch (Exception e) {
+                    ErrorHandle(e);
+                }
             }
 
             /// <summary>
