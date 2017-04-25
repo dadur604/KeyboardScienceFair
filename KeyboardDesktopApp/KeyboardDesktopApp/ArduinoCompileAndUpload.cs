@@ -69,7 +69,6 @@ namespace Form1 {
                 });
                 bool good = true;
                 try {
-                    
                     Program.ser.Open();
                 } catch (Exception e) {
                     Program.ErrorHandle(e);
