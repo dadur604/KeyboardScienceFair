@@ -86,7 +86,7 @@ namespace Form1 {
             }
             
             try {
-                Directory.Delete(path, true);
+                //Directory.Delete(path, true);
             } catch (Exception) {
             }
 

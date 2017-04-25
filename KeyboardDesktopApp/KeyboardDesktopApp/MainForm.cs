@@ -125,7 +125,7 @@ namespace Form1 {
             } else {
                 Program.Start();
             }
-            toolStripStatusLabel1.Text = "Running!";
+            
             buttonStart_Update();
             
         }
@@ -236,9 +236,10 @@ namespace Form1 {
             pictureBoxDefaultCheck.Location = new Point(158, 36 + (int)index * 16);
             pictureBoxDefaultCheck.Visible = true;
 
-            // TODO: Show default
-  
+        }
 
+        public int GetNumberSelected() {
+            return checkedListBox_layoutsList.SelectedItems.Count;
         }
     }
 }

@@ -177,35 +177,45 @@ namespace Form1 {
             }
         }
 
-            /// <summary>
-            /// Method restart will pause threads, re-open serial port, then resume threads.
-            /// </summary>
-            public static void Restart()
-            {
-                try {
-                    _suspendEvent.Reset();
-                    Start();
-                    errorState = false;
+        /// <summary>
+        /// Method restart will pause threads, re-open serial port, then resume threads.
+        /// </summary>
+        public static void Restart() {
+            try {
+                _suspendEvent.Reset();
+                Start();
+                errorState = false;
 
-                } catch (Exception e) {
-                    ErrorHandle(e);
-                }
+            } catch (Exception e) {
+                ErrorHandle(e);
             }
+        }
 
-            /// <summary>
-            /// Start method will open serial port, and start threads.
-            /// </summary>
-            public static void Start()
-            {
-                try {
-                if (ser.IsOpen) {
-                    ser.Close();
-                }
+        /// <summary>
+        /// Start method will open serial port, and start threads.
+        /// </summary>
+        public static void Start() {
+            try {
 
                 UpdateLayouts();
-                LanguageMaker.GenerateArduinoCode();
 
-               ser.Open();
+                if (!languageDictionary.ContainsDefault()) {
+                    throw new Exception("No Default!");
+                } else if (_Form1.GetNumberSelected() < 1) {
+                    throw new Exception("Select at least one layout!");
+                } else if (_Form1.GetNumberSelected() > 2) {
+                    throw new Exception("Select no more than two layouts!");
+                } else {
+                    ser.Open();
+                    if (ser.IsOpen) {
+                        ser.Close();
+                    }
+                    LanguageMaker.GenerateArduinoCode();
+                }
+
+
+
+                ser.Open();
 
                 if (!threadSend.IsAlive) {
                     threadSend.Start();
@@ -214,71 +224,69 @@ namespace Form1 {
                     threadRecieve.Start();
                 }
                 _suspendEvent.Set();
-                } catch (Exception e) {
-                    ErrorHandle(e);
+                _Form1.AppendTextStatus("Running!");
+            } catch (Exception e) {
+                ErrorHandle(e);
+            }
+        }
+
+        /// <summary>
+        /// General ErrorHandle method will set the program into an error state, and display error in Form1
+        /// </summary>
+        /// <param name="e"></param>
+        public static void ErrorHandle(Exception e) {
+            errorState = true;
+            errorMsg = e.ToString();
+            _Form1.AppendTextStatus("Error has occurred. Message: " + e.Message);
+            _Form1.AppendTextDebug(e.Message);
+            _Form1.buttonStart_Update();
+        }
+
+        public static void UpdateLayouts() {
+
+            enabledLayouts.Clear();
+
+            if (checkedItems.Count == 0) {
+                throw new Exception("Please select at least one layout!");
+            } else if (checkedItems.Count > 2) {
+                throw new Exception("Please select no more than two layouts!");
+            } else if (!languageDictionary.ContainsDefault()) {
+                ErrorHandle(new Exception("No Default!"));
+            } else {
+
+                foreach (var item in checkedItems) {
+                    enabledLayouts.Add(item.ToString());
                 }
             }
 
-            /// <summary>
-            /// General ErrorHandle method will set the program into an error state, and display error in Form1
-            /// </summary>
-            /// <param name="e"></param>
-            public static void ErrorHandle(Exception e)
-            {
-                errorState = true;
-                errorMsg = e.ToString();
-                _Form1.AppendTextStatus("Error has occurred. Message: " + e.Message);
-                _Form1.AppendTextDebug(e.Message);
-                _Form1.buttonStart_Update();
-            }
-
-            public static void UpdateLayouts()
-            {
-
-                enabledLayouts.Clear();
-
-                if (checkedItems.Count == 0) {
-                    throw new Exception("Please select at least one layout!");
-                } else if (checkedItems.Count > 2) {
-                    throw new Exception("Please select no more than two layouts!");
-                } else if (!languageDictionary.ContainsDefault()) {
-                    ErrorHandle(new Exception("No Default!"));
-                } else {
-
-                    foreach (var item in checkedItems) {
-                        enabledLayouts.Add(item.ToString());
-                    }
-                }
-
-            }
+        }
 
         internal static void DeleteLayout(int index) {
             string lang = languageDictionary[index].name;
             File.Delete(lang + ".klayout");
-            
+
             RefreshLayouts();
         }
 
-        public static void UpdateLayoutFromUser(Language lang, string name, int sid, int wid)
-            {
+        public static void UpdateLayoutFromUser(Language lang, string name, int sid, int wid) {
 
-                string path = AppDomain.CurrentDomain.BaseDirectory + lang.name + ".klayout";
+            string path = AppDomain.CurrentDomain.BaseDirectory + lang.name + ".klayout";
 
-                lang.name = name;
-                lang.serialID = sid;
-                lang.windowsID = wid;
+            lang.name = name;
+            lang.serialID = sid;
+            lang.windowsID = wid;
 
-                // Write to file
-                string[] lines = File.ReadAllLines(path);
-                lines[0] = "// Name: " + lang.name;
-                lines[1] = "// SID: " + lang.serialID;
-                lines[2] = "// WID: " + lang.windowsID;
-                File.Delete(path);
+            // Write to file
+            string[] lines = File.ReadAllLines(path);
+            lines[0] = "// Name: " + lang.name;
+            lines[1] = "// SID: " + lang.serialID;
+            lines[2] = "// WID: " + lang.windowsID;
+            File.Delete(path);
 
-                path = AppDomain.CurrentDomain.BaseDirectory + lang.name + ".klayout";
-                File.WriteAllLines(path, lines);
+            path = AppDomain.CurrentDomain.BaseDirectory + lang.name + ".klayout";
+            File.WriteAllLines(path, lines);
 
-                RefreshLayouts();
-            }
+            RefreshLayouts();
         }
     }
+}
