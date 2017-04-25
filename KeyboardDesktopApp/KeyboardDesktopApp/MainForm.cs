@@ -125,9 +125,9 @@ namespace Form1 {
             } else {
                 Program.Start();
             }
-            
+
             buttonStart_Update();
-            
+
         }
 
         private void toolStripStatusLabel1_Click(object sender, EventArgs e) {
@@ -168,6 +168,15 @@ namespace Form1 {
                 Program.ErrorHandle(new Exception("Please select no more than two layouts!"));
             }
             Program.checkedItems = (checkedListBox_layoutsList.CheckedItems);
+
+            foreach (var item in Program.languageDictionary) {
+                if (!checkedListBox_layoutsList.CheckedItems.Contains(item.name) && item.isDefault) {
+                    pictureBoxDefaultCheck.Visible = false;
+                    item.isDefault = false;
+                }
+            }
+
+            //TODO: un default when unselect default
         }
 
         private void toolStripMenuItemSettings_Click(object sender, EventArgs e) {
@@ -212,19 +221,19 @@ namespace Form1 {
                     var lang = Program.languageDictionary[(int)senderm.Parent.Tag];
                     EditLayoutForm form = new EditLayoutForm(lang);
                     if (form.ShowDialog() == DialogResult.OK) {
-                        Program.UpdateLayoutFromUser(lang: lang, name : form.textBoxName.Text, sid : (int)form.numericSerialID.Value, wid : (int)form.numericWindowsLayoutID.Value);
+                        Program.UpdateLayoutFromUser(lang: lang, name: form.textBoxName.Text, sid: (int)form.numericSerialID.Value, wid: (int)form.numericWindowsLayoutID.Value);
                     }
                     break;
                 case ("Delete"):
                     int index = (int)senderm.Parent.Tag;
-                    if (MessageBox.Show($"Are you sure you want to delete {Program.languageDictionary[index].name}?","Confirm", MessageBoxButtons.YesNo) == DialogResult.Yes) {
-                        
+                    if (MessageBox.Show($"Are you sure you want to delete {Program.languageDictionary[index].name}?", "Confirm", MessageBoxButtons.YesNo) == DialogResult.Yes) {
+
                         if (Program.languageDictionary[index].isDefault) {
                             pictureBoxDefaultCheck.Visible = false;
                         }
                         Program.DeleteLayout(index);
                         buttonRefreshLayouts_Click(null, null);
-                        
+
                     }
                     break;
             }

@@ -68,10 +68,7 @@ namespace Form1
 
         public static void UpdateArduinoTemplatePath(string newTempPath)
         {
-            Configuration config = ConfigurationManager.OpenExeConfiguration(Application.ExecutablePath);
-            config.AppSettings.Settings["arduinoOutputTemplateLocation"].Value = newTempPath;
-            config.Save();
-            inCode = newTempPath + @"\Arduino_Program\Arduino_Program.ino";
+            inCode = AppDomain.CurrentDomain.BaseDirectory + @"Arduino_Program.ino";
         }
 
         public static void GenerateArduinoCode()
